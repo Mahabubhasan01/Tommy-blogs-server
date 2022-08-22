@@ -2,6 +2,7 @@ import graphene
 from graphene_django import DjangoObjectType
 from django.contrib.auth.models import User
 
+# User sections
 
 class UserType(DjangoObjectType):
     class Meta:
@@ -57,20 +58,23 @@ class UpdateUser(graphene.Mutation):
         return UpdateUser(user=user)
 
 
-""" class DeleteUser(graphene.Mutation):
+class DeleteUser(graphene.Mutation):
     class Arguments:
-        id = graphene.Int()
+        id = graphene.ID()
 
-    def mutate(self, id, info):
+    user = graphene.Field(UserType)
+
+    @classmethod
+    def mutate(cls, root, info, id):
         user = User.objects.get(id=id)
         user.delete()
-        return DeleteUser() """
+        return DeleteUser(user)
 
 
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     update_user = UpdateUser.Field()
-    # delete_user = DeleteUser.Field()
+    delete_user = DeleteUser.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
